@@ -2,6 +2,7 @@
 #define _COMMONMATH_H_
 
 #include <string>
+#include "GetCircle.h"
 
 namespace commonmath
 {

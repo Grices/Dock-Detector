@@ -42,7 +42,7 @@ namespace commonmath
         {
             dx = data.X[i] - circle.a;
             dy = data.Y[i] - circle.b;
-            sum += pow((sqrt(dx*dx - dy*dy) - circle.r), 2);
+            sum += pow((sqrt(dx*dx + dy*dy) - circle.r), 2);
         }
         return sqrt(sum / (data.n));
     }

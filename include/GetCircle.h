@@ -2,9 +2,18 @@
 #define _GETCIRCLE_H_
 
 #include <string>
+#include <vector>
+
 
 namespace dockcircle
 {
+    struct lds_point
+    {
+        float x, y, rho, theta;
+        lds_point(){}
+        lds_point(float x_, float y_, float r_, float t_) : x(x_), y(y_), rho(r_), theta(t_){}
+    };
+
     class Circle
     {
         public:
@@ -16,13 +25,12 @@ namespace dockcircle
             Circle(float _a,float _b,float _r) : a(_a), b(_b), r(_r){}
     };
 
-
     class InterUser
     {
         private:
-            std::string m_filepath;
+            std::vector<lds_point> m_pointcloud;
         public:
-            InterUser(const std::string& filepath_) : m_filepath(filepath_) {}
+            InterUser(const std::vector<lds_point>& pointcloud_):m_pointcloud(pointcloud_){}
             const Circle* const Fit(void);        
     };
 

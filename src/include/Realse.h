@@ -7,14 +7,12 @@
 class CircleFitting
 {
     private:
-        std::string filepath;
         dockcircle::Circle* finalcir;
-
         dockcircle::Circle CiecleFit(commonmath::Data& data);
-        dockcircle::Circle* Fitting(const std::string& filepath);
+        dockcircle::Circle* Fitting(const std::vector<dockcircle::lds_point>& pointcloud_);
     
     public:
-        CircleFitting(const std::string& _filepath);
+        CircleFitting(const std::vector<dockcircle::lds_point>& pointcloud_);
         const dockcircle::Circle* const GetCircle(void) const;
 };
 

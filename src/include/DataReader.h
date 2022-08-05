@@ -6,19 +6,12 @@
 #include <fstream>
 #include <string>
 
-struct lds_point
-{
-    float x, y, rho, theta;
-    lds_point(){}
-    lds_point(float x_, float y_, float r_, float t_) : x(x_), y(y_), rho(r_), theta(t_){}
-};
-
 class ReadtoPoints
 {
-    private:
-        std::vector<lds_point> m_read_points;
     public:
-        const std::vector<lds_point>& GetPoints(void) const
+        std::vector<dockcircle::lds_point> m_read_points;
+    public:
+        const std::vector<dockcircle::lds_point>& GetPoints(void) const
         {
             return this->m_read_points;
         }
@@ -38,8 +31,8 @@ class ReadtoPoints
                 this->m_read_points.reserve(data_size);
                 for(int i = 0; i < data_size; ++i)
                 {
-                    lds_point tmp;
-                    iFile.read(reinterpret_cast<char*>(&tmp), sizeof(lds_point));
+                    dockcircle::lds_point tmp;
+                    iFile.read(reinterpret_cast<char*>(&tmp), sizeof(dockcircle::lds_point));
                     this->m_read_points.emplace_back(tmp);
                 }
             }while (iFile.eof());

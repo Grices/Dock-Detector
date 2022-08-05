@@ -1,10 +1,12 @@
+#include <iostream>
 #include <algorithm>
 #include <cmath>
 #include <memory>
 #include "../include/GetCircle.h"
 #include "include/Realse.h"
-#include "include/DataReader.h"
 #include "include/CommonMath.h"
+
+#include "include/DataReader.h"
 
 dockcircle::Circle CircleFitting::CiecleFit(commonmath::Data& data)
 {
@@ -61,10 +63,9 @@ dockcircle::Circle CircleFitting::CiecleFit(commonmath::Data& data)
     return circle;
 }
 
-dockcircle::Circle* CircleFitting::Fitting(const std::string& filepath)
+dockcircle::Circle* CircleFitting::Fitting(const std::vector<dockcircle::lds_point>& pointcloud_)
 {
-    ReadtoPoints r(filepath);
-    std::vector<lds_point> res = r.GetPoints();
+    std::vector<dockcircle::lds_point> res = pointcloud_;
     std::vector<dockcircle::Circle> candidate_class;
 
     static const int A = 110;
@@ -134,31 +135,34 @@ const dockcircle::Circle* const CircleFitting::GetCircle(void) const
 {
     return this->finalcir;
 }
-CircleFitting::CircleFitting(const std::string& filepath)
+CircleFitting::CircleFitting(const std::vector<dockcircle::lds_point>& pointcloud_)
 {
-    this->filepath = filepath;
-    this->finalcir = Fitting(filepath);
+    this->finalcir = Fitting(pointcloud_);
 }
 const dockcircle::Circle* const dockcircle::InterUser::Fit(void)
 {
-    std::shared_ptr<CircleFitting> fit_ptr = std::make_shared<CircleFitting>(this->m_filepath);
+    std::shared_ptr<CircleFitting> fit_ptr = std::make_shared<CircleFitting>(this->m_pointcloud);
     return fit_ptr->GetCircle();
 }
 
 int main()
 {
-    std::string filepath = "D:/C_Project/A_star/Points/4.bin";
-
-    CircleFitting target_cir(filepath);
-    if(target_cir.GetCircle() != nullptr)
-    {
-        std::cout << "Sigma:" << target_cir.GetCircle()->s << " Position:" << target_cir.GetCircle()->a << "," << target_cir.GetCircle()->b << std::endl;
-    }
+    std::string filepath = "";
+    if(filepath.empty()) {return 0;}
     else
     {
-        std::cout << "There is no target" << std::endl;
+        ReadtoPoints test_points(filepath);
+        std::vector<dockcircle::lds_point> points_stl = test_points.m_read_points;
+        CircleFitting target_cir(points_stl);
+        
+        if(target_cir.GetCircle() != nullptr)
+        {
+            std::cout << "Sigma:" << target_cir.GetCircle()->s << " Position:" << target_cir.GetCircle()->a << "," << target_cir.GetCircle()->b << std::endl;
+        }
+        else
+        {
+            std::cout << "There is no target" << std::endl;
+        }
+        return 0;
     }
-
-    system("pause");
-    return 0;
 }

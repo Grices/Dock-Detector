@@ -4,44 +4,17 @@
 #include "../include/GetCircle.h"
 #include "include/Realse.h"
 #include "include/DataReader.h"
-
-commonmath::Data::Data(int N, float dataX[], float dataY[])
-{
-    this->n = N;
-    this->X = new float[n];
-    this->Y = new float[n];
-    for(int i = 0; i < n; ++i)
-    {
-        X[i] = dataX[i];
-        Y[i] = dataY[i];
-    }
-}
-commonmath::Data::~Data()
-{
-    delete []X;
-    delete []Y;           
-}
-void commonmath::Data::means(void)
-{
-    meanX = 0; meanY = 0;
-    for(int i = 0; i < n; ++i)
-    {
-        meanX += X[i];
-        meanY += Y[i];
-    }
-    this->meanX /= n;
-    this->meanY /= n;
-            
-}
+#include "include/CommonMath.h"
 
 dockcircle::Circle CircleFitting::CiecleFit(commonmath::Data& data)
 {
     int i, iter, IterMAX = 10;
     float Xi, Yi, Zi;
-    float Mz, Mxx, Mxy, Mxz, Myy, Myz, Mzz, Cov_xy, Cov_yz, Var_z;
+    float Mz, Mxx, Mxy, Mxz, Myy, Myz, Mzz, Cov_xy, Var_z;
 
     dockcircle::Circle circle;
     data.means();
+
     Mxx = Myy = Mxy = Mxz = Myz = Mzz = 0;
     for(i = 0; i < data.n; ++i)
     {
@@ -58,8 +31,8 @@ dockcircle::Circle CircleFitting::CiecleFit(commonmath::Data& data)
     Mz = Mxx + Myy;
     Cov_xy = Mxx*Myy - pow(Mxy,2);
     Var_z = Mzz - Mz*Mz;
-    A3 = (4.)*Mz; A2 = (-3)*Mz*Mz -Mzz;
-    A1 = Var_z*Mz + (4.)*Cov_xy*Mz - Mxz*Mxz - Myz*Myz;
+    A3 = (4)*Mz; A2 = (-3)*Mz*Mz -Mzz;
+    A1 = Var_z*Mz + (4)*Cov_xy*Mz - Mxz*Mxz - Myz*Myz;
     A0 = Mxz*(Mxz*Myy - Myz*Mxz) + Myz*(Myz*Mxx - Mxz*Mxy) - Var_z*Cov_xy;
     float A22 = A2 + A2; float A33 = A3 + A3 + A3;
 
@@ -100,7 +73,7 @@ dockcircle::Circle* CircleFitting::Fitting(const std::string& filepath)
 
     for(int C = A; C > 40; C-=20)
     {
-        for(int k = 0; k < (res.size() - C); ++k)
+        for(int k = 0; k < int(res.size() - C); ++k)
         {
             if(res[k].theta > 2000) {continue;}
             float pos_linepoint = (res[k].x - res[k + C/2].x)*(res[k + C].y - res[k + C/2].y) - (res[k + C].x - res[k + C/2].x)*(res[k].y - res[k + C/2].y);
@@ -125,13 +98,13 @@ dockcircle::Circle* CircleFitting::Fitting(const std::string& filepath)
             float* py = yarr;
             for(int t = k; t < k+C; ++t, ++px, ++py)
             {
-                *xarr = res[t].x;
-                *yarr = res[t].y;
+                *px = res[t].x;
+                *py = res[t].y;
             }
             commonmath::Data data(C, xarr, yarr);
             dockcircle::Circle cir = CircleFitting::CiecleFit(data);
-            delete []xarr;
-            delete []yarr;
+            delete[]xarr;
+            delete[]yarr;
             k += C;
             candidate_class.push_back(cir);
         }
@@ -140,7 +113,7 @@ dockcircle::Circle* CircleFitting::Fitting(const std::string& filepath)
         dockcircle::Circle fitcircle;
         if(!candidate_class.empty())
         {
-            for(std::vector<dockcircle::Circle>::iterator ii = candidate_class.begin(); ii != candidate_class.end(); ii++)
+            for(std::vector<dockcircle::Circle>::iterator ii = candidate_class.begin(); ii != candidate_class.end(); ++ii)
             {
                 std::cout << (*ii).s << std::endl;
                 if((*ii).s < E)
@@ -172,3 +145,20 @@ const dockcircle::Circle* const dockcircle::InterUser::Fit(void)
     return fit_ptr->GetCircle();
 }
 
+int main()
+{
+    std::string filepath = "D:/C_Project/A_star/Points/4.bin";
+
+    CircleFitting target_cir(filepath);
+    if(target_cir.GetCircle() != nullptr)
+    {
+        std::cout << "Sigma:" << target_cir.GetCircle()->s << " Position:" << target_cir.GetCircle()->a << "," << target_cir.GetCircle()->b << std::endl;
+    }
+    else
+    {
+        std::cout << "There is no target" << std::endl;
+    }
+
+    system("pause");
+    return 0;
+}

@@ -22,7 +22,7 @@ namespace dockcircle
         private:
             std::string m_filepath;
         public:
-            InterUser(const std::string& filepath) : m_filepath(filepath) {}
+            InterUser(const std::string& filepath_) : m_filepath(filepath_) {}
             const Circle* const Fit(void);        
     };
 

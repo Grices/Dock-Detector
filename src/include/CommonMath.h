@@ -1,11 +1,33 @@
 #ifndef _COMMONMATH_H_
 #define _COMMONMATH_H_
 
-#include <string>
+#include <chrono>
+#include <cmath>
+#include <iostream>
 #include "../../include/GetCircle.h"
 
 namespace commonmath
 {
+    struct Timer
+    {
+        std::chrono::time_point<std::chrono::high_resolution_clock> start, end;
+        std::chrono::duration<float> dura;
+        std::string nam;
+        Timer(const std::string& mission)
+        {
+            nam = mission;
+            start = std::chrono::system_clock::now();
+            end = std::chrono::system_clock::now();
+        }
+        ~Timer()
+        {
+            end = std::chrono::system_clock::now();
+            dura = end - start;
+            std::cout << nam << " time spent: " << dura.count() * 1000.0f << "ms" << std::endl;
+        }
+    };
+    
+
     class Data
     {
         public:

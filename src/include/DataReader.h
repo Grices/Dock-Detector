@@ -10,6 +10,7 @@ class ReadtoPoints
 {
     public:
         std::vector<dockcircle::lds_point> m_read_points;
+        std::vector<std::vector<dockcircle::lds_point>> mf_points;
     public:
         const std::vector<dockcircle::lds_point>& GetPoints(void) const
         {
@@ -24,18 +25,24 @@ class ReadtoPoints
                 std::cout << "File not exit." << std::endl;
                 return;
             }
-            iFile.seekg(0, std::ios::beg);
-            do{
+            else
+            {
+                int times = 0;
                 int data_size = 0;
-                iFile.read((char*)(&data_size), sizeof(data_size));
-                this->m_read_points.reserve(data_size);
-                for(int i = 0; i < data_size; ++i)
+                while (iFile.peek() != EOF)
                 {
-                    dockcircle::lds_point tmp;
-                    iFile.read(reinterpret_cast<char*>(&tmp), sizeof(dockcircle::lds_point));
-                    this->m_read_points.emplace_back(tmp);
+                    iFile.read((char*)(&data_size), sizeof(data_size));
+                    this->m_read_points.clear();
+                    this->m_read_points.reserve(data_size);
+                    for(int i = 0; i < data_size; ++i)
+                    {
+                        dockcircle::lds_point tmp;
+                        iFile.read(reinterpret_cast<char*>(&tmp), sizeof(dockcircle::lds_point));
+                        this->m_read_points.emplace_back(tmp);
+                    }
+                    this->mf_points.emplace_back(m_read_points);
                 }
-            }while (iFile.eof());
+            }
             iFile.close();
         }        
 };

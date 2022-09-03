@@ -17,11 +17,10 @@ namespace dockcircle
     class Circle
     {
         public:
-            float a,b,r,s,g;
-            float Gx,Gy;
-            int i,j;
+            float a,b,r,s,o;
+            int itera_times, size_interval;
         public:
-            Circle() : a(0), b(0), r(1), s(0), i(0), j(0){}
+            Circle() : a(0), b(0), r(0), s(0), o(0), itera_times(0), size_interval(0){}
             Circle(float _a,float _b,float _r) : a(_a), b(_b), r(_r){}
     };
 
